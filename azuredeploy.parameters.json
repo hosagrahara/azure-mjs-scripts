@@ -1,0 +1,33 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "value": "mdce"
+    },
+    "headnodeMachineSize": {
+      "value": "Standard_DS2"
+    },
+    "workerMachineSize": {
+      "value": "Standard_DS2"
+    },
+    "numWorkerVms": {
+      "value": 1
+    },
+    "numWorkerOnMJS": {
+      "value": 0
+    },
+    "numWorkersOnWorker": {
+      "value": -1
+    },
+    "imageUri": {
+      "value": "https://mdcsimage2016bdisks590.blob.core.windows.net/system/Microsoft.Compute/Images/mdcsimage2016b/mdcsimage2016b-osDisk.c76eba44-63c2-45a5-ab51-14d4580d5cf5.vhd"
+    },
+    "vhdContainer": {
+      "value": "https://mdcsimage2016bdisks590.blob.core.windows.net/clusterdisks/"
+    },
+    "adminUsername": {
+      "value": "clouduser"
+    },
+  }
+}
