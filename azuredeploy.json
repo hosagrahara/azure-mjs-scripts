@@ -380,6 +380,9 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
             "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('workerMachineName'), copyindex())]"
+            ],
             "copy": {
                 "name": "foo",
                 "count": "[parameters('numWorkerVms')]"
