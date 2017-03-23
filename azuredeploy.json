@@ -249,6 +249,8 @@
         "dnsLabelPrefix": "[concat(parameters('name'),uniqueString(resourceGroup().id))]",
         "headnodeMachineName": "[concat(parameters('name'),'-headnode')]",
         "workerMachineName": "[concat(parameters('name'),'-worker')]",
+        "scriptUri": "https://raw.githubusercontent.com/univ2218/azure-mjs-scripts/master/",
+        "scriptName": "[concat(variables('scriptUri'), 'scripts/R2016bstartmjs.ps1')]",
         "headnodeScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File startmjs.ps1 headnode",
         "workerScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File ‪startmjs.ps1 worker",
         "headnodeNetworkInterfaceName": "[concat('nic-',variables('headnodeMachineName'))]",
@@ -304,6 +306,27 @@
             }
         },
         {
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "apiVersion": "2015-06-15",
+          "name": "[concat(variables('headnodeMachineName'), '/Installation')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('headnodeMachineName'))]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.5",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "[variables('scriptName')]"
+              ],
+              "commandToExecute": "[concat(variables('headnodeScriptInstallationCLI'), ' ', [reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn], ' ', parameters('name'), ' ', parameters('numWorkerOnMJS'))]"
+            }
+          }
+        },
+        {
             "name": "[concat(variables('workerMachineName'), copyIndex())]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2016-04-30-preview",
@@ -350,6 +373,31 @@
                     ]
                 }
             }
+        },
+        {
+          "apiVersion": "2015-06-15",
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('workerMachineName'), copyindex())]"
+          ],
+          "copy": {
+            "name": "foo",
+            "count": "[parameters('numWorkerVms')]"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.5",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "[variables('scriptName')]"
+              ],
+              "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', [reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn], ' ', parameters('name'), ' ', parameters('numWorkersOnWorker'))]"
+            }
+          }
         },
         {
             "name": "[variables('virtualNetworkName')]",
