@@ -255,7 +255,7 @@
         "workerScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File startmjs.ps1 worker",
         "headnodeNetworkInterfaceName": "[concat('nic-',variables('headnodeMachineName'))]",
         "workerNetworkInterfaceName": "[concat('nic-',variables('workerMachineName'))]",
-        "networkSecurityGroupName": "[concat('nsg-',variables('headnodeMachineName'))]",
+        "networkSecurityGroupName": "nsg",
         "publicIpAddressName": "[concat('ip-',variables('headnodeMachineName'))]",
         "workerPublicIpAddressName": "[concat('ip-',variables('workerMachineName'))]",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
