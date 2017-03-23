@@ -252,7 +252,7 @@
         "scriptUri": "https://raw.githubusercontent.com/univ2218/azure-mjs-scripts/master/",
         "scriptName": "[concat(variables('scriptUri'), 'scripts/startmjs.ps1')]",
         "headnodeScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File startmjs.ps1 headnode",
-        "workerScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File ‪startmjs.ps1 worker",
+        "workerScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File startmjs.ps1 worker",
         "headnodeNetworkInterfaceName": "[concat('nic-',variables('headnodeMachineName'))]",
         "workerNetworkInterfaceName": "[concat('nic-',variables('workerMachineName'))]",
         "networkSecurityGroupName": "[concat('nsg-',variables('headnodeMachineName'))]",
@@ -489,7 +489,7 @@
             "properties": {
                 "publicIpAllocationMethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[concat(variables('headnodeMachineName'), '-', variables('dnsLabelPrefix')]"
+                    "domainNameLabel": "[concat(variables('headnodeMachineName'), '-', variables('dnsLabelPrefix'))]"
                 }
             }
         },
@@ -505,7 +505,7 @@
             "properties": {
                 "publicIpAllocationMethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[concat(variables('workerMachineName'), copyIndex(), '-', variables('dnsLabelPrefix')]"
+                    "domainNameLabel": "[concat(variables('workerMachineName'), copyIndex(), '-', variables('dnsLabelPrefix'))]"
                 }
             }
         },
