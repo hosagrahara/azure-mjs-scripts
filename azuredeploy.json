@@ -323,7 +323,7 @@
                     "fileUris": [
                         "[variables('scriptName')]"
                     ],
-                    "commandToExecute": "[concat(variables('headnodeScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', parameters('name'), ' ', parameters('numWorkerOnMJS'))]"
+                    "commandToExecute": "[concat(variables('headnodeScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', variables('headnodeMachineName'), ' ', parameters('name'), ' ', parameters('numWorkerOnMJS'))]"
                 }
             }
         },
@@ -380,9 +380,6 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
             "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('headnodeMachineName'), 'Installation')]"
-            ],
             "copy": {
                 "name": "foo",
                 "count": "[parameters('numWorkerVms')]"
@@ -396,7 +393,7 @@
                     "fileUris": [
                         "[variables('scriptName')]"
                     ],
-                    "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', parameters('name'), ' ', parameters('numWorkersOnWorker'))]"
+                    "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))).dnsSettings.fqdn, ' ', variables('headnodeMachineName'), ' ', parameters('name'), ' ', parameters('numWorkersOnWorker'))]"
                 }
             }
         },
