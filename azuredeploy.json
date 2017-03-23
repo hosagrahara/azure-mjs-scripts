@@ -381,7 +381,7 @@
             "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/extensions/', variables('headnodeMachineName'), '/Installation')]"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('headnodeMachineName'), 'Installation')]"
             ],
             "copy": {
                 "name": "foo",
@@ -489,7 +489,7 @@
             "properties": {
                 "publicIpAllocationMethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[variables('dnsLabelPrefix')]"
+                    "domainNameLabel": "[concat(variables('headnodeMachineName'), '-', variables('dnsLabelPrefix')]"
                 }
             }
         },
@@ -505,7 +505,7 @@
             "properties": {
                 "publicIpAllocationMethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[variables('dnsLabelPrefix')]"
+                    "domainNameLabel": "[concat(variables('workerMachineName'), copyIndex(), '-', variables('dnsLabelPrefix')]"
                 }
             }
         },
