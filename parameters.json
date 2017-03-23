@@ -24,7 +24,7 @@
       "value": "https://mdcsimages.blob.core.windows.net/system/Microsoft.Compute/Images/mdcsr2016bwin/mdcsr2016bwin-osDisk.8135ac74-3235-47e3-b3a6-98450686a2c6.vhd"
     },
     "vhdContainer": {
-      "value": "https://mdcsimages.blob.core.windows.net/clusterdisks/"
+      "value": "https://mdcsimages.blob.core.windows.net/clusterdisks"
     },
     "adminUsername": {
       "value": "clouduser"
