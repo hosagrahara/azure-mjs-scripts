@@ -1,6 +1,11 @@
 # mjs & worker vm setup script - run on mjs and worker VMs within a public cluster
-# To launch headnode node: startmjs.ps1 headnode
-# To launch worker node: startmjs.ps1 worker
+# To launch headnode node: startmjs.ps1 headnode hostname master mjsname numworkers
+# To launch worker node: startmjs.ps1 worker hostname master mjsname numworkers
+# Arguments:
+# hostname : the hostname that the service should advertise with.
+# master: the host name where the jobmanager is running.
+# mjsname: the name of the jobmanager service.
+# numworkers: the number of workers to start on the machine. -1 starts as many workers as cores.
 
 function trace() {
     param(
@@ -49,27 +54,18 @@ $mdcsdir = $matlabroot + "\toolbox\distcomp\bin"
 
 echo "config mdce_def" | trace
 $configfile = $mdcsdir + "\mdce_def.bat"
-# internal DNS name
-$dnssuffix = (Get-WmiObject Win32_NetworkAdapterConfiguration -ComputerName $env:COMPUTERNAME | ? {$_.IPEnabled} | ?{$_.DNSDomain -ne $null}).DNSDomain
 
-if(0 -eq $p[0].ToLower().CompareTo("headnode")) {
-	# Use public DNS name for headnode hostname so clients can resolve it.
-	$hostfqdn = $p[1]
-	$masterfqdn = $hostfqdn
-} else {
-	# Use private DNS name for worker hostname.
-	$hostfqdn = "$env:COMPUTERNAME.$dnssuffix"
-	$masterfqdn = $p[1]
-}
+$hostname = $p[1]
+$master = $p[2]
 
 # Make sure the DNS name can be resolved on all nodes
-while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $hostfqdn))) {
+while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $hostname))) {
   echo "keep contacting host dns" | trace
   Start-Sleep 10
   ipconfig /flushdns
   $t++
 };
-while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $masterfqdn))) {
+while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $master))) {
   echo "keep contacting master dns" | trace
   Start-Sleep 10
   ipconfig /flushdns
@@ -77,7 +73,7 @@ while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $masterfqdn))) {
 };
 
 # Write hostname to mdce_def file
-(Get-Content $configfile) | Foreach-Object {$_ -replace '^REM set HOSTNAME=.+$', ('set HOSTNAME=' + $hostfqdn)} | Set-Content ($configfile)
+(Get-Content $configfile) | Foreach-Object {$_ -replace '^REM set HOSTNAME=.+$', ('set HOSTNAME=' + $hostname)} | Set-Content ($configfile)
 (Get-Content $configfile) | Foreach-Object {$_ -replace '^set USE_MATHWORKS_HOSTED_LICENSE_MANAGER=.+$', ("set USE_MATHWORKS_HOSTED_LICENSE_MANAGER=true")} | Set-Content ($configfile)
 
 # Step 2. Open tcp ports in firewall
@@ -100,10 +96,23 @@ Set-Location $mdcsdir
 if(0 -eq $p[0].ToLower().CompareTo("headnode")) { # for headnode only
   # - Start MJS job manager
   echo "starting job manager"  | trace
-  .\startjobmanager.bat -name $p[2] 2>&1 | trace
+  .\startjobmanager.bat -name $p[3] 2>&1 | trace
 }
 
-# Step 5. Launch any workers. Both headnode and workers can share this step
+# Step 5. open PING
+echo "opening PING" | trace
+Get-NetFirewallRule | ?{$_.Name -like "FPS-ICMP*"} | Enable-NetFirewallRule
+
+# Step 6. Block until master can be contacted, if master can be ping-ed, mjs has been setup on master
+echo "contacting master" | trace
+# Block until can ping, max try 10*360 seconds. If this machine IS master, it'll pass directly
+while(($t -lt 360) -and ($True -ne ( Test-Connection -count 1 -computer $master -quiet ))) {
+  echo "keep contacting master" | trace
+  Start-Sleep 10
+  $t++
+};
+
+# Step 7. Launch any workers. Both headnode and workers can share this step
 $total = $p[$p.length-1] # the last argument is the # of workers
 if($total -eq -1) { # -1 means auto, # of workers == # of cores
   $total = (Get-WmiObject -class win32_processor -Property "numberOfCores").NumberOfCores
@@ -112,7 +121,7 @@ echo "start workers (total = $total)" | trace
 for($i=0;$i -lt $total;$i++) {
   $workername = "WORKER_" + $env:COMPUTERNAME + "_" + $i + "_" + $total
   echo "add worker $workername" | trace
-  .\startworker.bat -jobmanagerhost $masterfqdn -jobmanager $p[2] -name $workername 2>&1 | trace
+  .\startworker.bat -jobmanagerhost $master -jobmanager $p[3] -name $workername 2>&1 | trace
 }
 echo "all done. exit." | trace
 }
