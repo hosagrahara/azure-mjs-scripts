@@ -246,7 +246,7 @@
         "virtualNetworkName": "[concat('vnet-',parameters('name'))]",
         "subnetPrefix": "10.0.0.0/24",
         "subnetName": "dse",
-        "dnsLabelPrefix": "[uniqueString(resourceGroup().id))]",
+        "dnsLabelPrefix": "[concat('azure-', uniqueString(resourceGroup().id))]",
         "headnodeMachineName": "[concat(parameters('name'),'-headnode')]",
         "workerMachineName": "[concat(parameters('name'),'-worker')]",
         "scriptUri": "https://raw.githubusercontent.com/univ2218/azure-mjs-scripts/master/",
