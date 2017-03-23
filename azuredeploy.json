@@ -250,7 +250,7 @@
         "headnodeMachineName": "[concat(parameters('name'),'-headnode')]",
         "workerMachineName": "[concat(parameters('name'),'-worker')]",
         "scriptUri": "https://raw.githubusercontent.com/univ2218/azure-mjs-scripts/master/",
-        "scriptName": "[concat(variables('scriptUri'), 'scripts/R2016bstartmjs.ps1')]",
+        "scriptName": "[concat(variables('scriptUri'), 'scripts/startmjs.ps1')]",
         "headnodeScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File startmjs.ps1 headnode",
         "workerScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File ‪startmjs.ps1 worker",
         "headnodeNetworkInterfaceName": "[concat('nic-',variables('headnodeMachineName'))]",
