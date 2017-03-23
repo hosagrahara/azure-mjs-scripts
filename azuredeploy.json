@@ -289,7 +289,7 @@
                         "caching": "ReadWrite",
                         "osType": "Windows",
                         "vhd": {
-                            "uri": "[concat(parameters('vhdContainer'), variables('headnodeMachineName'), '.vhd')]"
+                            "uri": "[concat(parameters('vhdContainer'), '/', variables('headnodeMachineName'), '.vhd')]"
                         },
                         "image": {
                             "uri": "[parameters('imageUri')]"
@@ -358,7 +358,7 @@
                         "caching": "ReadWrite",
                         "osType": "Windows",
                         "vhd": {
-                            "uri": "[concat(parameters('vhdContainer'), variables('workerMachineName'), copyIndex(), '.vhd')]"
+                            "uri": "[concat(parameters('vhdContainer'), '/', variables('workerMachineName'), copyIndex(), '.vhd')]"
                         },
                         "image": {
                             "uri": "[parameters('imageUri')]"
