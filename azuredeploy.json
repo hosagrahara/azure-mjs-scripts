@@ -219,16 +219,16 @@
             }
         },
         "imageUri": {
-          "type": "string",
-          "metadata": {
-            "description": "The URL to the disk image in blob that will be used to create all VMs."
-          }
+            "type": "string",
+            "metadata": {
+                "description": "The URL to the disk image in blob that will be used to create all VMs."
+            }
         },
         "vhdContainer": {
-          "type": "string",
-          "metadata": {
-            "description": "This is the container URL that will hold all VHDs for the VMs. This must be in the same storage container as the VM image."
-          }
+            "type": "string",
+            "metadata": {
+                "description": "This is the container URL that will hold all VHDs for the VMs. This must be in the same storage container as the VM image."
+            }
         },
         "adminUsername": {
             "type": "string",
@@ -285,16 +285,16 @@
                     "osDisk": {
                         "name": "[concat(variables('headnodeMachineName'), 'osdisk.vhd')]",
                         "createOption": "fromImage",
-                        "caching":  "ReadWrite",
+                        "caching": "ReadWrite",
                         "osType": "Windows",
                         "vhd": {
                             "uri": "[concat(parameters('vhdContainer'), variables('headnodeMachineName'), '.vhd')]"
                         },
-                        "image": { 
-                            "uri":  "[parameters('imageUri')]"
+                        "image": {
+                            "uri": "[parameters('imageUri')]"
                         }
                     },
-                    "dataDisks": [ ]
+                    "dataDisks": []
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -306,25 +306,26 @@
             }
         },
         {
-          "type": "Microsoft.Compute/virtualMachines/extensions",
-          "apiVersion": "2015-06-15",
-          "name": "[concat(variables('headnodeMachineName'), '/Installation')]",
-          "location": "[resourceGroup().location]",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('headnodeMachineName'))]"
-          ],
-          "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.5",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "fileUris": [
-                "[variables('scriptName')]"
-              ],
-              "commandToExecute": "[concat(variables('headnodeScriptInstallationCLI'), ' ', [reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn], ' ', parameters('name'), ' ', parameters('numWorkerOnMJS'))]"
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2015-06-15",
+            "name": "[concat(variables('headnodeMachineName'), '/Installation')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('headnodeMachineName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.5",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[variables('scriptName')]"
+                    ],
+                    "commandToExecute": "[concat(variables('headnodeScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', parameters('name'), ' ', parameters('numWorkerOnMJS'))]"
+                }
             }
-          }
         },
         {
             "name": "[concat(variables('workerMachineName'), copyIndex())]",
@@ -354,16 +355,16 @@
                     "osDisk": {
                         "name": "[concat(variables('workerMachineName'), copyIndex(), 'osdisk.vhd')]",
                         "createOption": "fromImage",
-                        "caching":  "ReadWrite",
+                        "caching": "ReadWrite",
                         "osType": "Windows",
                         "vhd": {
                             "uri": "[concat(parameters('vhdContainer'), variables('workerMachineName'), copyIndex(), '.vhd')]"
                         },
-                        "image": { 
-                            "uri":  "[parameters('imageUri')]"
+                        "image": {
+                            "uri": "[parameters('imageUri')]"
                         }
                     },
-                    "dataDisks": [ ]
+                    "dataDisks": []
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -375,29 +376,30 @@
             }
         },
         {
-          "apiVersion": "2015-06-15",
-          "type": "Microsoft.Compute/virtualMachines/extensions",
-          "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
-          "location": "[resourceGroup().location]",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('workerMachineName'), copyindex())]"
-          ],
-          "copy": {
-            "name": "foo",
-            "count": "[parameters('numWorkerVms')]"
-          },
-          "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.5",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "fileUris": [
-                "[variables('scriptName')]"
-              ],
-              "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', [reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn], ' ', parameters('name'), ' ', parameters('numWorkersOnWorker'))]"
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('workerMachineName'), copyindex())]"
+            ],
+            "copy": {
+                "name": "foo",
+                "count": "[parameters('numWorkerVms')]"
+            },
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.5",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[variables('scriptName')]"
+                    ],
+                    "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', parameters('name'), ' ', parameters('numWorkersOnWorker'))]"
+                }
             }
-          }
         },
         {
             "name": "[variables('virtualNetworkName')]",
