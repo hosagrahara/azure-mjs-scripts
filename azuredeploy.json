@@ -257,6 +257,7 @@
         "workerNetworkInterfaceName": "[concat('nic-',variables('workerMachineName'))]",
         "networkSecurityGroupName": "[concat('nsg-',variables('headnodeMachineName'))]",
         "publicIpAddressName": "[concat('ip-',variables('headnodeMachineName'))]",
+        "workerPublicIpAddressName": "[concat('ip-',variables('workerMachineName'))]",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetName'))]"
     },
@@ -311,7 +312,6 @@
             "name": "[concat(variables('headnodeMachineName'), '/Installation')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]",
                 "[concat('Microsoft.Compute/virtualMachines/', variables('headnodeMachineName'))]"
             ],
             "properties": {
@@ -381,8 +381,7 @@
             "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]",
-                "[concat('Microsoft.Compute/virtualMachines/', variables('workerMachineName'), copyindex())]"
+                "[concat('Microsoft.Compute/virtualMachines/extensions', variables('headnodeMachineName'), '/Installation')]",
             ],
             "copy": {
                 "name": "foo",
@@ -459,6 +458,7 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+                "[concat('Microsoft.Network/publicIpAddresses/', concat(variables('workerPublicIpAddressName'), copyIndex()))]",
             ],
             "copy": {
                 "name": "foo",
@@ -472,7 +472,10 @@
                             "subnet": {
                                 "id": "[variables('subnetRef')]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))]"
+                            }
                         }
                     }
                 ]
@@ -483,6 +486,22 @@
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2016-09-01",
             "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIpAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('dnsLabelPrefix')]"
+                }
+            }
+        },
+        {
+            "name": "[concat(variables('workerPublicIpAddressName'), copyIndex())]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2016-09-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "foo",
+                "count": "[parameters('numWorkerVms')]"
+            },
             "properties": {
                 "publicIpAllocationMethod": "Dynamic",
                 "dnsSettings": {
