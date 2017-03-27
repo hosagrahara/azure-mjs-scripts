@@ -381,7 +381,8 @@
             "name": "[concat(variables('workerMachineName'), copyindex(), '/Installation')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('workerMachineName'), copyindex())]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('workerMachineName'), copyindex())]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('headnodeMachineName'), 'Installation')]"
             ],
             "copy": {
                 "name": "foo",
