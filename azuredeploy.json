@@ -323,7 +323,7 @@
                     "fileUris": [
                         "[variables('scriptName')]"
                     ],
-                    "commandToExecute": "[concat(variables('headnodeScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', variables('headnodeMachineName'), ' ', parameters('name'), ' ', parameters('numWorkerOnMJS'))]"
+                    "commandToExecute": "[concat(variables('headnodeScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', parameters('name'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', parameters('numWorkerOnMJS'))]"
                 }
             }
         },
@@ -396,7 +396,7 @@
                     "fileUris": [
                         "[variables('scriptName')]"
                     ],
-                    "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))).dnsSettings.fqdn, ' ', variables('headnodeMachineName'), ' ', parameters('name'), ' ', parameters('numWorkersOnWorker'))]"
+                    "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))).dnsSettings.fqdn, ' ', parameters('name'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))).dnsSettings.fqdn, ' ', parameters('numWorkersOnWorker'))]"
                 }
             }
         },
@@ -567,45 +567,6 @@
                             "destinationPortRange": "14350-14479",
                             "access": "Allow",
                             "direction": "Inbound",
-                            "sourcePortRange": "*",
-                            "destinationAddressPrefix": "*"
-                        }
-                    },
-                    {
-                        "name": "mathworks-hosted-license-manager-outbound",
-                        "properties": {
-                            "priority": 1010,
-                            "sourceAddressPrefix": "*",
-                            "protocol": "TCP",
-                            "destinationPortRange": "443",
-                            "access": "Allow",
-                            "direction": "Outbound",
-                            "sourcePortRange": "*",
-                            "destinationAddressPrefix": "*"
-                        }
-                    },
-                    {
-                        "name": "mathworks-job-scheduler-outbound",
-                        "properties": {
-                            "priority": 1020,
-                            "sourceAddressPrefix": "*",
-                            "protocol": "TCP",
-                            "destinationPortRange": "27000-28000",
-                            "access": "Allow",
-                            "direction": "Outbound",
-                            "sourcePortRange": "*",
-                            "destinationAddressPrefix": "*"
-                        }
-                    },
-                    {
-                        "name": "mathworks-workers-outbound",
-                        "properties": {
-                            "priority": 1030,
-                            "sourceAddressPrefix": "*",
-                            "protocol": "TCP",
-                            "destinationPortRange": "14350-14479",
-                            "access": "Allow",
-                            "direction": "Outbound",
                             "sourcePortRange": "*",
                             "destinationAddressPrefix": "*"
                         }
