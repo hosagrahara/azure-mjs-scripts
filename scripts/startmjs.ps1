@@ -96,23 +96,10 @@ if(0 -eq $p[0].ToLower().CompareTo("headnode")) { # for headnode only
   Invoke-Expression ".\startjobmanager.bat -name $mjsname 2>&1" | trace
 }
 
-# Step 4. open PING
-echo "opening PING" | trace
-Get-NetFirewallRule | ?{$_.Name -like "FPS-ICMP*"} | Enable-NetFirewallRule
-
-# Step 5. Block until master can be contacted, if master can be ping-ed, mjs has been setup on master
-echo "contacting master" | trace
-# Block until can ping, max try 10*360 seconds. If this machine IS master, it'll pass directly
-while(($t -lt 360) -and ($True -ne ( Test-Connection -count 1 -computer $mjshost -quiet ))) {
-  echo "keep contacting headnode" | trace
-  Start-Sleep 10
-  $t++
-};
-
 echo "start workers" | trace
 Invoke-Expression ".\startworker.bat -jobmanagerhost $mjshost -jobmanager $mjsname -num " | trace
 
-# Step 6. Launch any workers. Both headnode and workers can share this step
+# Step 4. Launch any workers. Both headnode and workers can share this step
 if($numworkers -eq -1) { # -1 means auto, # of workers == # of cores
   $numworkers = (Get-WmiObject -class win32_processor -Property "numberOfCores").NumberOfCores
 }
