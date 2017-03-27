@@ -242,7 +242,7 @@
             "properties": {
                 "publicIpAllocationMethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[concat(variables('headnodeMachineName'), '-', variables('dnsLabelPrefix'))]"
+                    "domainNameLabel": "[concat(parameters('name'), '-', variables('dnsLabelPrefix'))]"
                 }
             }
         },
