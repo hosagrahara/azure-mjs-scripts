@@ -2,12 +2,6 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "name": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of cluster."
-            }
-        },
         "headnodeMachineSize": {
             "type": "string",
             "defaultValue": "Standard_DS2",
@@ -245,13 +239,14 @@
         }
     },
     "variables": {
+		"name": "[resourceGroup().name]",
         "addressPrefix": "10.0.0.0/16",
-        "virtualNetworkName": "[concat('vnet-',parameters('name'))]",
+        "virtualNetworkName": "[concat('vnet-', variables('name'))]",
         "subnetPrefix": "10.0.0.0/24",
         "subnetName": "dse",
         "dnsLabelPrefix": "[concat('azure-', uniqueString(resourceGroup().id))]",
-        "headnodeMachineName": "[concat(parameters('name'),'-headnode')]",
-        "workerMachineName": "[concat(parameters('name'),'-worker')]",
+        "headnodeMachineName": "[concat(variables('name'),'-headnode')]",
+        "workerMachineName": "[substring(concat(variables('name'), uniqueString(deployment().name)), 0, 12)]",
         "scriptUri": "https://raw.githubusercontent.com/univ2218/azure-mjs-scripts/master/",
         "scriptName": "[concat(variables('scriptUri'), 'scripts/startmjs.ps1')]",
         "headnodeScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File startmjs.ps1 headnode",
