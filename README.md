@@ -20,3 +20,13 @@ One way to create a cluster is from Azure portal. Click the following button wil
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
+
+The name of the Matlab Job Scheduler service will match the name of the resource group in which you deploy it.
+
+## Grow a Cluster
+
+To add workers to an existing MJS cluster launch the following template. You must select the resource group of the existing MJS service.
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2FgrowCluster.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
