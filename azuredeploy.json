@@ -201,14 +201,14 @@
         "numWorkerVms": {
             "type": "int",
             "metadata": {
-                "description": "Number of VMs to create that run the workers. Client and MJS VM don't count into this number."
+                "description": "Number of VMs to create that run the workers. The headnode VM doesn't count into this number."
             }
         },
         "numWorkerOnMJS": {
             "type": "int",
             "defaultValue": 0,
             "metadata": {
-                "description": "Number of workers running on the master MJS VM. Zero is the default and recommended. -1 will create one worker per core."
+                "description": "Number of workers running on the headnode VM. Zero is the default and recommended. -1 will create one worker per core."
             }
         },
         "numWorkersOnWorker": {
@@ -221,7 +221,7 @@
         "imageUri": {
             "type": "string",
             "metadata": {
-                "description": "The URL to the disk image in blob that will be used to create all VMs."
+                "description": "The URL to the MATLAB disk image in blob that will be used to create all VMs."
             }
         },
         "vhdContainer": {
@@ -238,7 +238,10 @@
             }
         },
         "adminPassword": {
-            "type": "securestring"
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin user password."
+            }
         }
     },
     "variables": {

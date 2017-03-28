@@ -2,9 +2,9 @@
 # To launch headnode node: startmjs.ps1 headnode hostname mjsname headnodehost numworkers
 # To launch worker node: startmjs.ps1 worker hostname mjsname headnodehost numworkers
 # Arguments:
-# hostname : the hostname of the mdce service.
-# mjsname: the name of the jobmanager service.
-# headnodehost: the host name where the jobmanager is running.
+# hostname : the hostname of the VM to use with the mdce service.
+# mjsname: the name of the MATLAB job scheduler.
+# headnodehost: the host name where the MATLAB job scheduler is running.
 # numworkers: the number of workers to start on the machine. -1 starts as many workers as cores.
 
 function trace() {
@@ -95,9 +95,6 @@ if(0 -eq $p[0].ToLower().CompareTo("headnode")) { # for headnode only
   echo "starting job manager"  | trace
   Invoke-Expression ".\startjobmanager.bat -name $mjsname 2>&1" | trace
 }
-
-echo "start workers" | trace
-Invoke-Expression ".\startworker.bat -jobmanagerhost $mjshost -jobmanager $mjsname -num " | trace
 
 # Step 4. Launch any workers. Both headnode and workers can share this step
 if($numworkers -eq -1) { # -1 means auto, # of workers == # of cores
