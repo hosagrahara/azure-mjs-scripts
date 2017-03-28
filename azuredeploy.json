@@ -400,7 +400,7 @@
                     "fileUris": [
                         "[variables('scriptName')]"
                     ],
-                    "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))).dnsSettings.fqdn, ' ', parameters('name'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))).dnsSettings.fqdn, ' ', parameters('numWorkersOnWorker'))]"
+                    "commandToExecute": "[concat(variables('workerScriptInstallationCLI'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses', concat(variables('workerPublicIpAddressName'), copyIndex()))).dnsSettings.fqdn, ' ', parameters('name'), ' ', reference(resourceId('Microsoft.Network/publicIpAddresses',variables('publicIpAddressName')),'2016-09-01').dnsSettings.fqdn, ' ', parameters('numWorkersOnWorker'))]"
                 }
             }
         },

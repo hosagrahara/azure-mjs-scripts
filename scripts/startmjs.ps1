@@ -73,8 +73,8 @@ while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $mjshost))) {
 # Add firewall exceptions for matlab
 echo "config firewall" | trace
 Get-NetFirewallRule | ?{$_.Name -like "RemoteSvcAdmin*"} | Enable-NetFirewallRule
-New-NetFirewallRule -Name "mdcs_jobmanager" -DisplayName "mdcs_jobmanager" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 27000-28000
-New-NetFirewallRule -Name "mdcs_workers" -DisplayName "mdcs_workers" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 14350-14479
+New-NetFirewallRule -Name "mdcs_jobmanager" -DisplayName "mdcs_jobmanager" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 27000-28000 -ErrorAction SilentlyContinue
+New-NetFirewallRule -Name "mdcs_workers" -DisplayName "mdcs_workers" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 14350-14479 -ErrorAction SilentlyContinue
 
 # Step 2. Install & Start MDCE service
 $matlabroot = FindMatlabRoot
@@ -109,9 +109,9 @@ if($numworkers -eq -1) { # -1 means auto, # of workers == # of cores
 echo "start workers (numworkers = $numworkers)" | trace
 Invoke-Expression ".\startworker.bat -jobmanagerhost $mjshost -jobmanager $mjsname -num $numworkers 2>&1" | trace
 
-Set-Location $currentdir
-
 echo "all done. exit." | trace
+
+Set-Location $currentdir
 }
 
 foreach($arg in $args) {
