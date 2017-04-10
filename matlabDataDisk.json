@@ -183,7 +183,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[parameters('virtualMachineName')]",
+                        "name": "[parameters('name')]",
                         "createOption": "fromImage",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
