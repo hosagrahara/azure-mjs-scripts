@@ -234,14 +234,14 @@
         }
     },
     "variables": {
-		"name": "[resourceGroup().name]",
+	"name": "[resourceGroup().name]",
         "addressPrefix": "10.0.0.0/16",
         "virtualNetworkName": "[concat('vnet-', variables('name'))]",
         "subnetPrefix": "10.0.0.0/24",
         "subnetName": "dse",
         "dnsLabelPrefix": "[concat('azure-', uniqueString(resourceGroup().id))]",
         "headnodeMachineName": "[concat(variables('name'),'-headnode')]",
-        "workerMachineName": "[substring(concat(variables('name'), uniqueString(deployment().name)), 0, 12)]",
+        "workerMachineName": "[concat(variables('name'),'-worker')]",
         "scriptUri": "https://raw.githubusercontent.com/univ2218/azure-mjs-scripts/master/",
         "scriptName": "[concat(variables('scriptUri'), 'scripts/startmjs.ps1')]",
         "headnodeScriptInstallationCLI": "powershell -ExecutionPolicy Unrestricted -File startmjs.ps1 headnode",
@@ -309,7 +309,6 @@
                     "dataDisks": [
                         {
                             "lun": 0,
-                            "name": "matlab",
                             "createOption": "Attach",
                             "caching": "ReadOnly",
                             "managedDisk": {
@@ -411,7 +410,6 @@
                     "dataDisks": [
                         {
                             "lun": 0,
-                            "name": "matlab",
                             "createOption": "Attach",
                             "caching": "ReadOnly",
                             "managedDisk": {
