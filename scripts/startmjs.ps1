@@ -86,6 +86,7 @@ Get-NetFirewallRule | ?{$_.Name -like "RemoteSvcAdmin*"} | Enable-NetFirewallRul
 New-NetFirewallRule -Name "mdcs_jobmanager" -DisplayName "mdcs_jobmanager" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 27000-28000 -ErrorAction SilentlyContinue
 New-NetFirewallRule -Name "mdcs_workers" -DisplayName "mdcs_workers" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 14350-14479 -ErrorAction SilentlyContinue
 New-NetFirewallRule -Name "mdcs_msmpi" -DisplayName "mdcs_msmpi" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 28350-29350 -ErrorAction SilentlyContinue
+New-NetFirewallRule -Name "mdcs_mhlm" -DisplayName "mdcs_mhlm" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 443 -ErrorAction SilentlyContinue
 
 # Step 2. Install & Start MDCE service
 $matlabroot = FindMatlabRoot
