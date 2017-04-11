@@ -300,7 +300,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[parameters('name')]",
+                        "name": "[variables('headnodeMachineName')]",
                         "createOption": "fromImage",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
@@ -402,7 +402,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[parameters('name')]",
+                        "name": "[concat(variables('workerMachineName'), copyIndex())]",
                         "createOption": "fromImage",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
