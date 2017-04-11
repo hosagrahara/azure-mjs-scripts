@@ -95,10 +95,7 @@ $mdcsdir = $matlabroot + "\toolbox\distcomp\bin"
 
 $mdceloglevel = 6
 $mdcecommand = "-clean"
-$mdcecommand = $mdcecommand + " -requireweblicensing -ondemand"
-$mdcecommand = $mdcecommand + " -workerproxiespoolconnections"
-$mdcecommand = $mdcecommand + " -enablepeerlookup"
-$mdcecommand = $mdcecommand + " -untrustedclients"
+$mdcecommand = $mdcecommand + " -usemhlm"
 $mdcecommand = $mdcecommand + " -loglevel " + $mdceloglevel
 $mdcecommand = $mdcecommand + " -hostname " + $hostname
 
