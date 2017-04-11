@@ -30,18 +30,26 @@ function FindMatlabRoot() {
     $computername = $env:computername
     $MatlabKey="SOFTWARE\\MathWorks\\MATLAB"
     $reg=[microsoft.win32.registrykey]::OpenRemoteBaseKey('LocalMachine',$computername) 
-    $regkey=$reg.OpenSubKey($MatlabKey) 
-    $subkeys=$regkey.GetSubKeyNames() 
-    $matlabroot = ""
-    foreach($key in $subkeys){
-        $thisKey=$MatlabKey + "\\" + $key 
-        $thisSubKey=$reg.OpenSubKey($thisKey)
-        $thisroot = $thisSubKey.GetValue("MATLABROOT")
-        if($matlabroot -lt $thisroot) {
-            $matlabroot = $thisroot
+    $regkey=$reg.OpenSubKey($MatlabKey)
+    if ($regkey) {
+        # MATLAB install found
+        $subkeys=$regkey.GetSubKeyNames() 
+        $matlabroot = ""
+        foreach($key in $subkeys){
+            $thisKey=$MatlabKey + "\\" + $key 
+            $thisSubKey=$reg.OpenSubKey($thisKey)
+            $thisroot = $thisSubKey.GetValue("MATLABROOT")
+            if($matlabroot -lt $thisroot) {
+                $matlabroot = $thisroot
+            }
         }
-    } 
-    return $matlabroot
+        return $matlabroot
+    } else {
+        # Searching for attached volume with name "matlab" to use as matlab root.
+        $matlabvolume = GET-WMIOBJECT win32_logicaldisk | Where-Object -FilterScript {$_.VolumeName -Eq "matlab"}
+        $matlabroot = $matlabvolume.DeviceID
+        return $matlabroot
+    }
 }
 
 function main($p) {
@@ -57,12 +65,14 @@ $mjshost = $p[3]
 $numworkers = $p[4]
 
 # Step 1. Make sure the DNS names can be resolved on all nodes
+echo "Contacting hostname $hostname" | trace
 while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $hostname))) {
   echo "keep contacting host dns" | trace
   Start-Sleep 10
   ipconfig /flushdns
   $t++
 };
+echo "Contacting headnode hostname $mjshost" | trace
 while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $mjshost))) {
   echo "keep contacting headnode dns" | trace
   Start-Sleep 10
@@ -79,6 +89,7 @@ New-NetFirewallRule -Name "mdcs_msmpi" -DisplayName "mdcs_msmpi" -Direction Inbo
 
 # Step 2. Install & Start MDCE service
 $matlabroot = FindMatlabRoot
+echo "Using matlab root $matlabroot" | trace
 $mdcsdir = $matlabroot + "\toolbox\distcomp\bin"
 
 $mdceloglevel = 6
@@ -98,7 +109,7 @@ Invoke-Expression ".\mdce.bat start $mdcecommand 2>&1" | trace
 # Step 3. Install MJS - headnode only.
 if(0 -eq $p[0].ToLower().CompareTo("headnode")) { # for headnode only
   # - Start MJS job manager
-  echo "starting job manager"  | trace
+  echo "starting job manager $mjsname" | trace
   Invoke-Expression ".\startjobmanager.bat -name $mjsname 2>&1" | trace
 }
 
@@ -106,7 +117,7 @@ if(0 -eq $p[0].ToLower().CompareTo("headnode")) { # for headnode only
 if($numworkers -eq -1) { # -1 means auto, # of workers == # of cores
   $numworkers = (Get-WmiObject -class win32_processor -Property "numberOfCores").NumberOfCores
 }
-echo "start workers (numworkers = $numworkers)" | trace
+echo "starting workers (numworkers = $numworkers)" | trace
 Invoke-Expression ".\startworker.bat -jobmanagerhost $mjshost -jobmanager $mjsname -num $numworkers 2>&1" | trace
 
 echo "all done. exit." | trace
