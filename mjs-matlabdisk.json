@@ -367,7 +367,7 @@
             "copy": {
                 "name": "foo",
                 "count": "[parameters('numWorkerVms')]"
-            },
+            }
         },
         {
             "name": "[concat(variables('workerMachineName'), copyIndex())]",
