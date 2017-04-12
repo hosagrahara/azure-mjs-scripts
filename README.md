@@ -15,18 +15,20 @@ configuration assumes that the MathWorks Hosted License Manager is used for
 
 ## Create a Cluster
 
-One way to create a cluster is from Azure portal. Click the following button will bring you to Azure portal UI to deploy MATLAB Distributed Computing Server cluster.
+One way to create a cluster is from Azure portal. Click the following buttons will bring you to Azure portal UI to deploy MATLAB Distributed Computing Server cluster.
+
+The name of the Matlab Job Scheduler service will match the name of the resource group in which you deploy it.
+
+## Matlab VM Image
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
-The name of the Matlab Job Scheduler service will match the name of the resource group in which you deploy it.
-
-## Grow a Cluster
+## Matlab Data Disk
 
 To add workers to an existing MJS cluster launch the following template. You must select the resource group of the existing MJS service.
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2FgrowCluster.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2Fmjs-matlabdisk.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
