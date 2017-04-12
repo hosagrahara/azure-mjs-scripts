@@ -36,7 +36,7 @@ Pre-requisites:
 Launch MJS cluster using a snapshot of a data disk with MDCS installed. this will be attached to each VM created.
 
 Pre-requisites:  
-1. Snapshot of a data disk with MDCS innstalled.
+1. Snapshot of a data disk with MDCS installed.
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2Fmjs-matlabdisk.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
