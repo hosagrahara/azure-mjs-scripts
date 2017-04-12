@@ -23,8 +23,9 @@ The name of the Matlab Job Scheduler service will match the name of the resource
 
 Launch MJS cluster using a VM image with MDCS installed.
 
-Pre-equisites:  1. VM image with MATLAB installed in a storage account under the same subscription where the cluster will be created.
-                2. Storage container for VM disks in the same storage account as the VM image.
+Pre-equisites:  
+1. VM image with MATLAB installed in a storage account under the same subscription where the cluster will be created.
+2. Storage container for VM disks in the same storage account as the VM image.
                 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
@@ -34,7 +35,8 @@ Pre-equisites:  1. VM image with MATLAB installed in a storage account under the
 
 Launch MJS cluster using a snapshot of a data disk with MDCS installed. this will be attached to each VM created.
 
-Pre-equisites:  1. Snapshot of a data disk with MDCS innstalled.
+Pre-equisites:  
+1. Snapshot of a data disk with MDCS innstalled.
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Funiv2218%2Fazure-mjs-scripts%2Fmaster%2Fmjs-matlabdisk.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
