@@ -33,7 +33,7 @@ Pre-requisites:
 
 ## Matlab Data Disk
 
-Launch MJS cluster using a snapshot of a data disk with MDCS installed. this will be attached to each VM created.
+Launch MJS cluster using a snapshot of a data disk with MDCS installed. This will be attached to each VM created.
 
 Pre-requisites:  
 1. Snapshot of a data disk with MDCS installed.
