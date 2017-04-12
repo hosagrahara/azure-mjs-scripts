@@ -46,10 +46,18 @@ function FindMatlabRoot() {
         return $matlabroot
     } else {
         # Searching for attached volume with name "matlab" to use as matlab root.
-        $matlabvolume = GET-WMIOBJECT win32_logicaldisk | Where-Object -FilterScript {$_.VolumeName -Eq "matlab"}
+        $matlabvolume = Get-WmiObject win32_logicaldisk | Where-Object -FilterScript {$_.VolumeName -Eq "matlab"}
         $matlabroot = $matlabvolume.DeviceID
         return $matlabroot
     }
+}
+
+function preWarmMATLAB() {
+# Call the pre warm script in the background. This reads files into memory
+# to improve MATLAB startup time. This is just an optimization, so there's no
+# need to block.
+$warmscript = $matlabroot + "\bin\win64\MATLABStartupAccelerator.exe"
+Invoke-Expression "$warmscript 2>&1" | trace
 }
 
 function main($p) {
@@ -64,7 +72,7 @@ $mjsname = $p[2]
 $mjshost = $p[3]
 $numworkers = $p[4]
 
-# Step 1. Make sure the DNS names can be resolved on all nodes
+# Step 1. Make sure the DNS names can be resolved on all nodes.
 echo "Contacting hostname $hostname" | trace
 while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $hostname))) {
   echo "keep contacting host dns" | trace
@@ -80,7 +88,7 @@ while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $mjshost))) {
   $t++
 };
 
-# Add firewall exceptions for matlab
+# Add firewall exceptions for matlab.
 echo "config firewall" | trace
 Get-NetFirewallRule | ?{$_.Name -like "RemoteSvcAdmin*"} | Enable-NetFirewallRule
 New-NetFirewallRule -Name "mdcs_jobmanager" -DisplayName "mdcs_jobmanager" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 27000-28000 -ErrorAction SilentlyContinue
@@ -88,7 +96,7 @@ New-NetFirewallRule -Name "mdcs_workers" -DisplayName "mdcs_workers" -Direction 
 New-NetFirewallRule -Name "mdcs_msmpi" -DisplayName "mdcs_msmpi" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 28350-29350 -ErrorAction SilentlyContinue
 New-NetFirewallRule -Name "mdcs_mhlm" -DisplayName "mdcs_mhlm" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 443 -ErrorAction SilentlyContinue
 
-# Step 2. Install & Start MDCE service
+# Step 2. Install & Start MDCE service.
 $matlabroot = FindMatlabRoot
 echo "Using matlab root $matlabroot" | trace
 $mdcsdir = $matlabroot + "\toolbox\distcomp\bin"
@@ -117,6 +125,9 @@ if($numworkers -eq -1) { # -1 means auto, # of workers == # of cores
 }
 echo "starting workers (numworkers = $numworkers)" | trace
 Invoke-Expression ".\startworker.bat -jobmanagerhost $mjshost -jobmanager $mjsname -num $numworkers 2>&1" | trace
+
+# Step 5. Start reading MATLAB install for faster start up times.
+preWarmMATLAB
 
 echo "all done. exit." | trace
 
