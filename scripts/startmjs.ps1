@@ -91,8 +91,8 @@ while(($t -lt 360) -and ($True -ne (Resolve-Dnsname $mjshost))) {
 # Add firewall exceptions for matlab.
 echo "config firewall" | trace
 Get-NetFirewallRule | ?{$_.Name -like "RemoteSvcAdmin*"} | Enable-NetFirewallRule
-New-NetFirewallRule -Name "mdcs_inbound" -DisplayName "mdcs_inbound" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 1-69999 -ErrorAction SilentlyContinue
-New-NetFirewallRule -Name "mdcs_outbound" -DisplayName "mdcs_outbound" -Direction Outbound -Action Allow -Protocol TCP -LocalPort 1-69999 -ErrorAction SilentlyContinue
+New-NetFirewallRule -Name "mdcs_inbound" -DisplayName "mdcs_inbound" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 0-65535 -ErrorAction SilentlyContinue
+New-NetFirewallRule -Name "mdcs_outbound" -DisplayName "mdcs_outbound" -Direction Outbound -Action Allow -Protocol TCP -LocalPort 0-65535 -ErrorAction SilentlyContinue
 
 # Step 2. Install & Start MDCE service.
 $matlabroot = FindMatlabRoot
